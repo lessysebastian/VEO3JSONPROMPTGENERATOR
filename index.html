@@ -51,7 +51,6 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // Komponen Icon Sederhana (Menggunakan SVG Inline untuk reliabilitas di HTML tunggal)
         const Icon = ({ name, size = 18, className = "" }) => {
             return <i data-lucide={name} style={{ width: size, height: size }} className={className}></i>;
         };
@@ -262,7 +261,7 @@
                         <div className="max-w-md w-full">
                             <div className="bg-slate-900 border border-slate-800 p-8 rounded-[2.5rem] shadow-2xl text-center">
                                 <div className="bg-gradient-to-br from-indigo-500 to-purple-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6"><Icon name="lock" size={32} className="text-white"/></div>
-                                <h1 className="text-xl font-black tracking-tighter text-white mb-2">VEO3 JSON PROMPT GENERATOR</h1>
+                                <h1 className="text-xl font-black tracking-tighter text-white mb-2 uppercase">VEO3 JSON PROMPT GENERATOR</h1>
                                 <p className="text-xs text-indigo-400 font-bold uppercase tracking-widest mb-8">by Lessy Sebastian</p>
                                 <form onSubmit={handleAuth} className="space-y-4">
                                     <input 
@@ -304,10 +303,12 @@
                     </nav>
 
                     <main className="flex-1 p-4 md:p-8 overflow-y-auto bg-slate-950">
-                        <div className="max-w-4xl mx-auto">
+                        <div className="max-w-4xl mx-auto text-left">
                             <header className="mb-8 flex justify-between items-center">
                                 <div>
-                                    <h2 className="text-3xl font-black mb-1 capitalize tracking-tight">{activeTab === 'general' ? 'Video Format' : activeTab}</h2>
+                                    <h2 className="text-3xl font-black mb-1 capitalize tracking-tight">
+                                        {activeTab === 'general' ? 'Video Format' : activeTab === 'environment' ? 'Lingkungan' : activeTab === 'style' ? 'Gaya Visual' : activeTab}
+                                    </h2>
                                     <p className="text-slate-400 text-sm">Panel Konfigurasi VEO 3.</p>
                                 </div>
                                 {activeTab === 'subject' && (
@@ -356,24 +357,84 @@
                                         )}
                                     </div>
                                 )}
+
+                                {activeTab === 'environment' && (
+                                    <div className="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-8 shadow-xl grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in duration-500">
+                                        <CustomSelect label="Lokasi Utama" value={promptData.environment.location} customValue={promptData.environment.location_custom} options={options.environment.locations} onChange={(v) => updateField('environment', 'location', v)} onCustomChange={(v) => updateField('environment', 'location_custom', v)} />
+                                        <CustomSelect label="Waktu" value={promptData.environment.time} customValue={promptData.environment.time_custom} options={options.environment.times} onChange={(v) => updateField('environment', 'time', v)} onCustomChange={(v) => updateField('environment', 'time_custom', v)} />
+                                        <CustomSelect label="Cuaca" value={promptData.environment.weather} customValue={promptData.environment.weather_custom} options={options.environment.weather} onChange={(v) => updateField('environment', 'weather', v)} onCustomChange={(v) => updateField('environment', 'weather_custom', v)} />
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Atmosfer & Mood</label>
+                                            <input type="text" className="input-style" placeholder="Misterius, nostalgic..." value={promptData.environment.atmosphere} onChange={(e) => updateField('environment', 'atmosphere', e.target.value)} />
+                                        </div>
+                                    </div>
+                                )}
+
+                                {activeTab === 'camera' && (
+                                    <div className="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-8 shadow-xl grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in duration-500">
+                                        <CustomSelect label="Sudut Kamera" value={promptData.camera.angle} customValue={promptData.camera.angle_custom} options={options.camera.angles} onChange={(v) => updateField('camera', 'angle', v)} onCustomChange={(v) => updateField('camera', 'angle_custom', v)} />
+                                        <CustomSelect label="Gerakan Kamera" value={promptData.camera.movement} customValue={promptData.camera.movement_custom} options={options.camera.movements} onChange={(v) => updateField('camera', 'movement', v)} onCustomChange={(v) => updateField('camera', 'movement_custom', v)} />
+                                        <div className="flex flex-col gap-2 md:col-span-2">
+                                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Lensa & Fokus</label>
+                                            <input type="text" className="input-style" placeholder="Contoh: 35mm f/1.8..." value={promptData.camera.lens} onChange={(e) => updateField('camera', 'lens', e.target.value)} />
+                                        </div>
+                                    </div>
+                                )}
+
+                                {activeTab === 'style' && (
+                                    <div className="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-8 shadow-xl grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in duration-500">
+                                        <CustomSelect label="Estetika Visual" value={promptData.style.aesthetic} customValue={promptData.style.aesthetic_custom} options={options.style.aesthetics} onChange={(v) => updateField('style', 'aesthetic', v)} onCustomChange={(v) => updateField('style', 'aesthetic_custom', v)} />
+                                        <CustomSelect label="Pencahayaan" value={promptData.style.lighting} customValue={promptData.style.lighting_custom} options={options.style.lighting} onChange={(v) => updateField('style', 'lighting', v)} onCustomChange={(v) => updateField('style', 'lighting_custom', v)} />
+                                        <div className="flex flex-col gap-2 md:col-span-2">
+                                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Color Grading</label>
+                                            <input type="text" className="input-style" placeholder="Contoh: Warm tones, Teal and Orange..." value={promptData.style.color_grading} onChange={(e) => updateField('style', 'color_grading', e.target.value)} />
+                                        </div>
+                                    </div>
+                                )}
+
+                                {activeTab === 'motion' && (
+                                    <div className="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-8 shadow-xl space-y-8 animate-in fade-in duration-500">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                            <div className="flex flex-col gap-4">
+                                                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Dinamika Gerakan</label>
+                                                <input type="range" min="1" max="10" className="w-full h-2 bg-slate-800 rounded-full appearance-none cursor-pointer accent-indigo-500" 
+                                                    value={promptData.motion.dynamic_range === 'Low' ? 2 : promptData.motion.dynamic_range === 'Medium' ? 5 : 8} 
+                                                    onChange={(e) => {
+                                                        const v = parseInt(e.target.value);
+                                                        updateField('motion', 'dynamic_range', v < 4 ? 'Low' : v < 7 ? 'Medium' : 'High');
+                                                    }} 
+                                                />
+                                                <div className="flex justify-between px-1 text-[10px] font-black text-indigo-400/50 uppercase"><span>Low</span><span>Medium</span><span>High</span></div>
+                                            </div>
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Aliran Video (Flow)</label>
+                                                <select className="input-style" value={promptData.motion.flow} onChange={(e) => updateField('motion', 'flow', e.target.value)}>
+                                                    <option value="Continuous">Continuous</option>
+                                                    <option value="Slow-mo">Slow Motion</option>
+                                                    <option value="Time-lapse">Time Lapse</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </main>
 
                     <aside className="w-full md:w-[450px] bg-slate-900 border-l border-slate-800 p-8 flex flex-col h-screen md:sticky md:top-0">
                         <div className="flex flex-col gap-6 mb-8">
-                            <div className="flex items-center gap-3 text-indigo-400"><Icon name="code" size={20} /><span className="font-black text-xs uppercase tracking-widest">JSON Output Preview</span></div>
+                            <div className="flex items-center gap-3 text-indigo-400 text-left"><Icon name="code" size={20} /><span className="font-black text-xs uppercase tracking-widest">JSON Output Preview</span></div>
                             <div className="flex gap-2">
-                                <button onClick={copyToClipboard} className={`flex-1 py-3.5 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all ${copied ? 'bg-emerald-500 text-white' : 'bg-indigo-600 text-white'}`}>
+                                <button onClick={copyToClipboard} className={`flex-1 py-3.5 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all shadow-lg active:scale-95 ${copied ? 'bg-emerald-500 text-white' : 'bg-indigo-600 text-white shadow-indigo-600/20'}`}>
                                     {copied ? 'Copied' : 'Copy JSON'}
                                 </button>
-                                <button onClick={() => window.location.reload()} className="px-5 bg-slate-800 text-slate-400 border border-slate-700 rounded-2xl"><Icon name="rotate-ccw" size={18}/></button>
+                                <button onClick={() => window.location.reload()} className="px-5 bg-slate-800 text-slate-400 border border-slate-700 rounded-2xl hover:text-white hover:border-white transition-all"><Icon name="rotate-ccw" size={18}/></button>
                             </div>
                         </div>
-                        <div className="flex-1 bg-black/50 rounded-[2rem] p-6 overflow-hidden border border-slate-800 flex flex-col">
+                        <div className="flex-1 bg-black/50 rounded-[2rem] p-6 overflow-hidden border border-slate-800 flex flex-col shadow-inner text-left">
                             <pre className="text-[10px] font-mono text-indigo-300 leading-relaxed overflow-y-auto flex-1 custom-scrollbar">{getCleanJson()}</pre>
                         </div>
-                        <div className="mt-8 p-6 bg-slate-950 border border-slate-800 rounded-[2rem] text-center"><p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Designed by Lessy Sebastian</p></div>
+                        <div className="mt-8 p-6 bg-slate-950 border border-slate-800 rounded-[2rem] text-center shadow-lg"><p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Designed by Lessy Sebastian</p></div>
                     </aside>
                 </div>
             );
